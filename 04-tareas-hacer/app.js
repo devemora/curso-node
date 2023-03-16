@@ -1,17 +1,40 @@
 require('colors');
 
-const { inquirerMenu } = require('./helpers/inquirer');
+const { guardarDb, leerDb } = require('./helpers/guardarArchivo');
+const { inquirerMenu, pausa, leerInput } = require('./helpers/inquirer');
+const Tareas = require('./models/tareas');
 
 const main = async () => {
-  console.log('Hola mundo');
-
   let opt = '';
+  const tareas = new Tareas();
 
+  const tareasDb = leerDb();
+
+  if (tareasDb) {
+    //establecer tareas
+  }
+  await pausa();
   do {
+    //imprimir el menu
     opt = await inquirerMenu();
-    console.log({ opt });
-    if (opt !== '0') await pausa();
-  } while (opt != '0');
+    console.log(opt);
+
+    switch (opt) {
+      case '1':
+        // crear opcion
+        const desc = await leerInput('Descripcion:');
+        tareas.crearTarea(desc);
+        break;
+
+      case '2':
+        console.log(tareas.listadoArr);
+      default:
+        break;
+    }
+
+    guardarDb(tareas.listadoArr);
+    await pausa();
+  } while (opt !== '0');
 };
 
 main();
